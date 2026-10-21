@@ -8,6 +8,12 @@ Customers place orders against live stock and follow them to delivery. Admins ru
 
 The interesting parts are correctness and security: stock can never go negative (proved with parallel-request tests), a failed order never leaves a partial reservation behind, two people changing the same order cannot corrupt its history, and every permission is enforced by the API, not just hidden in the UI.
 
+## Live demo
+
+![A customer places an order and the admin sees it instantly; the admin moves it through Processing, Shipped and Delivered and the customer's screen updates by itself](docs/realtime-demo.gif)
+
+*Two browsers side by side: the admin (left) and the customer (right). Nothing is refreshed; every change arrives over SignalR.*
+
 ## Screenshots
 
 | Sign in | Admin dashboard |
