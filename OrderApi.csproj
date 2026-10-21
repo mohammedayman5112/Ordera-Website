@@ -8,6 +8,13 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);client\**;tests\**</DefaultItemExcludes>
   </PropertyGroup>
 
+  <!-- Show the Angular source in Solution Explorer for browsing and editing. They are "None" items: they take no
+       part in the build or publish, and node_modules, dist and the lock file are deliberately left out. -->
+  <ItemGroup>
+    <None Include="client\src\**" />
+    <None Include="client\angular.json;client\package.json;client\tsconfig*.json;client\proxy.conf.js;client\nginx.conf;client\Dockerfile;client\README.md" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.*" />
