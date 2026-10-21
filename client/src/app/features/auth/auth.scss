@@ -1,0 +1,51 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem 1rem;
+}
+
+.auth-card {
+  width: min(26rem, 100%);
+  padding: 1.75rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+
+  svg {
+    color: var(--primary);
+  }
+}
+
+h1 {
+  font-size: 1.35rem;
+}
+
+.lead {
+  margin: 0.25rem 0 1.25rem;
+  color: var(--text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.submit {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.switch {
+  margin: 1.25rem 0 0;
+  text-align: center;
+  color: var(--text-muted);
+}

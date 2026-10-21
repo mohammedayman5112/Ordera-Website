@@ -1,0 +1,47 @@
+.small {
+  font-size: 0.85rem;
+}
+
+.you {
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.role {
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  &.admin {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+}
+
+.row-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.busy {
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.confirm-text {
+  margin: 0 0 1.25rem;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}

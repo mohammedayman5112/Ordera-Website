@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+.git/
+.vs/
+.vscode/
+.idea/
+tools/
+client/
+tests/
+docs/
+postman/
+*.md
+Dockerfile
+docker-compose.yml
+App_Data/

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Limited edition mug">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffedd5"/>
+      <stop offset="1" stop-color="#fed7aa"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <circle cx="340" cy="52" r="70" fill="#ffffff" opacity=".28"/>
+  <circle cx="48" cy="268" r="54" fill="#ffffff" opacity=".22"/>
+  <ellipse cx="190" cy="258" rx="100" ry="10" fill="#7c2d12" opacity=".16"/>
+  <path d="M262 142 C310 138 312 214 262 210" fill="none" stroke="#1f2937" stroke-width="18" stroke-linecap="round"/>
+  <path d="M112 112 H268 V222 Q268 244 246 244 H134 Q112 244 112 222 Z" fill="#1f2937"/>
+  <ellipse cx="190" cy="112" rx="78" ry="14" fill="#374151"/>
+  <ellipse cx="190" cy="112" rx="64" ry="9" fill="#7c3f1d"/>
+  <polygon points="190,146 198,166 220,167 203,181 209,202 190,190 171,202 177,181 160,167 182,166" fill="#fbbf24"/>
+  <text x="190" y="226" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" letter-spacing="3" text-anchor="middle" fill="#fbbf24">LIMITED</text>
+  <path d="M158 84 Q150 70 160 58 T158 34" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+  <path d="M190 84 Q182 70 192 58 T190 34" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+  <path d="M222 84 Q214 70 224 58 T222 34" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+</svg>

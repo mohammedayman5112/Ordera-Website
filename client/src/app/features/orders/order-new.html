@@ -1,0 +1,125 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>New order</h1>
+      <p>Pick products, set quantities, then place the order.</p>
+    </div>
+    <a class="btn" routerLink="/orders">Cancel</a>
+  </header>
+
+  <div class="layout">
+    <div class="card">
+      <div class="card-header">
+        <h2>Products</h2>
+        <app-search-box class="picker-search" placeholder="Search products…" (search)="onSearch($event)" />
+      </div>
+
+      @if (failed()) {
+        <div class="empty">
+          <strong>Could not load products</strong>
+          <button type="button" class="btn" (click)="refresh()">Retry</button>
+        </div>
+      } @else if (result(); as r) {
+        @if (r.items.length === 0) {
+          <div class="empty"><strong>No products found</strong>Try a different search.</div>
+        } @else {
+          <ul class="picker" [class.busy]="loading()">
+            @for (product of r.items; track product.id) {
+              <li>
+                <div class="who">
+                  <app-product-image [src]="product.imageUrl" [name]="product.name" [size]="48" />
+                  <div class="info">
+                    <strong>{{ product.name }}</strong>
+                    <span class="muted">
+                      {{ product.price | currency }} ·
+                      <span class="pill" [class]="'pill ' + stockLevel(product.availableQuantity)">
+                        {{ product.availableQuantity === 0 ? stockLabel(0) : product.availableQuantity + ' in stock' }}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-sm" [disabled]="atLimit(product)" (click)="add(product)">
+                  {{ cart.quantityOf(product.id) > 0 ? 'Add another' : 'Add' }}
+                </button>
+              </li>
+            }
+          </ul>
+          <app-pagination
+            [page]="r.page"
+            [pageSize]="r.pageSize"
+            [totalCount]="r.totalCount"
+            (pageChange)="goTo($event)"
+          />
+        }
+      } @else {
+        <div class="spinner" role="status" aria-label="Loading products"></div>
+      }
+    </div>
+
+    <aside class="card summary" aria-label="Order summary">
+      <div class="card-header">
+        <h2>Order summary</h2>
+        @if (cart.lines().length > 0) {
+          <button type="button" class="btn btn-sm" (click)="cart.clear()">Clear</button>
+        }
+      </div>
+
+      @if (cart.lines().length === 0) {
+        <div class="empty">
+          <strong>Nothing added yet</strong>
+          Add products from the list to build the order.
+        </div>
+      } @else {
+        <ul class="lines">
+          @for (line of cart.lines(); track line.productId) {
+            <li>
+              <div class="line-head">
+                <div class="who">
+                  <app-product-image [src]="line.imageUrl" [name]="line.name" [size]="32" />
+                  <strong>{{ line.name }}</strong>
+                </div>
+                <button
+                  type="button"
+                  class="remove"
+                  [attr.aria-label]="'Remove ' + line.name"
+                  (click)="cart.remove(line.productId)"
+                >
+                  ×
+                </button>
+              </div>
+              <div class="line-body">
+                <label class="visually-hidden" [for]="'qty-' + line.productId">Quantity of {{ line.name }}</label>
+                <input
+                  #qty
+                  class="input qty"
+                  type="number"
+                  min="1"
+                  step="1"
+                  [id]="'qty-' + line.productId"
+                  [max]="line.maxQuantity"
+                  [value]="line.quantity"
+                  (change)="changeQuantity(line.productId, qty)"
+                />
+                <span class="muted">× {{ line.unitPrice | currency }}</span>
+                <strong class="num">{{ line.quantity * line.unitPrice | currency }}</strong>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+
+      <div class="card-body footer">
+        @if (submitError(); as message) {
+          <div class="alert alert-error" role="alert">{{ message }}</div>
+        }
+        <div class="total">
+          <span>Total</span>
+          <strong>{{ cart.total() | currency }}</strong>
+        </div>
+        <button type="button" class="btn btn-primary" [disabled]="!canSubmit()" (click)="placeOrder()">
+          {{ submitting() ? 'Placing order…' : 'Place order' }}
+        </button>
+      </div>
+    </aside>
+  </div>
+</section>

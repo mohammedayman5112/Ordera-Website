@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="USB-C hub">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fef3c7"/>
+      <stop offset="1" stop-color="#fde68a"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <circle cx="340" cy="52" r="70" fill="#ffffff" opacity=".28"/>
+  <circle cx="48" cy="268" r="54" fill="#ffffff" opacity=".22"/>
+  <defs>
+    <linearGradient id="hub" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#94a3b8"/>
+      <stop offset="1" stop-color="#475569"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="215" cy="226" rx="120" ry="11" fill="#78350f" opacity=".16"/>
+  <path d="M104 160 C70 160 54 176 36 206" fill="none" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+  <rect x="24" y="198" width="26" height="14" rx="7" transform="rotate(-48 37 205)" fill="#0f172a"/>
+  <rect x="100" y="112" width="230" height="100" rx="20" fill="url(#hub)"/>
+  <rect x="100" y="112" width="230" height="22" rx="20" fill="#ffffff" opacity=".18"/>
+  <rect x="124" y="156" width="40" height="18" rx="9" fill="#0f172a"/>
+  <rect x="174" y="156" width="40" height="18" rx="9" fill="#0f172a"/>
+  <rect x="224" y="154" width="38" height="22" rx="4" fill="#0f172a"/>
+  <rect x="230" y="162" width="26" height="6" fill="#3b82f6"/>
+  <rect x="272" y="154" width="38" height="22" rx="4" fill="#0f172a"/>
+  <rect x="278" y="162" width="26" height="6" fill="#3b82f6"/>
+  <circle cx="316" cy="124" r="4" fill="#22c55e"/>
+</svg>

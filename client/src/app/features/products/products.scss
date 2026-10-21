@@ -1,0 +1,114 @@
+.small {
+  font-size: 0.85rem;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.archived {
+  td:not(.row-actions) {
+    opacity: 0.6;
+  }
+}
+
+.archived-pill {
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+
+.row-actions {
+  text-align: right;
+  white-space: nowrap;
+
+  .btn + .btn {
+    margin-left: 0.4rem;
+  }
+}
+
+.busy {
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+// The shop window: pictures first, one card per product.
+.catalogue {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: opacity 0.15s;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .details {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0 0.25rem;
+  }
+
+  .name {
+    line-height: 1.3;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .price {
+    font-size: 1.15rem;
+    font-weight: 800;
+  }
+
+  &.sold-out app-product-image {
+    opacity: 0.55;
+    filter: grayscale(0.6);
+  }
+}
+
+.catalogue-pager {
+  margin-top: 0.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

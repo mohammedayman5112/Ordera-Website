@@ -1,0 +1,159 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Products</h1>
+      <p>{{ isAdmin() ? 'Manage the catalogue and its stock levels.' : 'Browse the catalogue and add products to a new order.' }}</p>
+    </div>
+    @if (isAdmin()) {
+      <button type="button" class="btn btn-primary" (click)="creating.set(true)">New product</button>
+    }
+  </header>
+
+  <div class="toolbar">
+    <app-search-box class="search" placeholder="Search products…" [value]="query().search" (search)="onSearch($event)" />
+    @if (isAdmin()) {
+      <label class="check">
+        <input type="checkbox" [checked]="query().archived" (change)="onShowArchived($any($event.target).checked)" />
+        Show archived
+      </label>
+    }
+  </div>
+
+  @if (failed()) {
+    <div class="card">
+      <div class="empty">
+        <strong>Could not load products</strong>
+        <button type="button" class="btn" (click)="refresh()">Retry</button>
+      </div>
+    </div>
+  } @else if (result(); as r) {
+    @if (isEmpty()) {
+      <div class="card">
+        <div class="empty">
+          <strong>No products found</strong>
+          Try a different search{{ isAdmin() ? ', or create a new product' : '' }}.
+        </div>
+      </div>
+    } @else if (isAdmin()) {
+      <div class="card">
+        <div class="table-wrap" [class.busy]="loading()">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th class="num">Price</th>
+                <th class="num">In stock</th>
+                <th>Availability</th>
+                <th><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of r.items; track product.id) {
+                <tr [class.archived]="!product.isActive">
+                  <td>
+                    <div class="product-cell">
+                      <app-product-image [src]="product.imageUrl" [name]="product.name" [size]="44" />
+                      <div>
+                        <strong>{{ product.name }}</strong>
+                        <div class="muted small">#{{ product.id }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="num">{{ product.price | currency }}</td>
+                  <td class="num">{{ product.availableQuantity | number }}</td>
+                  <td>
+                    @if (product.isActive) {
+                      <span class="pill" [class]="'pill ' + stockLevel(product.availableQuantity)">
+                        {{ stockLabel(product.availableQuantity) }}
+                      </span>
+                    } @else {
+                      <span class="pill archived-pill">Archived</span>
+                    }
+                  </td>
+                  <td class="row-actions">
+                    <button type="button" class="btn btn-sm" (click)="editTarget.set(product)">Edit</button>
+                    <button type="button" class="btn btn-sm" (click)="stockTarget.set(product)">Stock</button>
+                    @if (product.isActive) {
+                      <button type="button" class="btn btn-sm" (click)="archive(product)">Archive</button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        [disabled]="product.availableQuantity === 0"
+                        (click)="addToOrder(product)"
+                      >
+                        Add to order
+                      </button>
+                    } @else {
+                      <button type="button" class="btn btn-sm" (click)="restore(product)">Restore</button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-pagination
+          [page]="r.page"
+          [pageSize]="r.pageSize"
+          [totalCount]="r.totalCount"
+          (pageChange)="goTo($event)"
+        />
+      </div>
+    } @else {
+      <ul class="catalogue" [class.busy]="loading()">
+        @for (product of r.items; track product.id) {
+          <li class="product-card" [class.sold-out]="product.availableQuantity === 0">
+            <app-product-image [src]="product.imageUrl" [name]="product.name" />
+            <div class="details">
+              <strong class="name">{{ product.name }}</strong>
+              <div class="meta">
+                <span class="price">{{ product.price | currency }}</span>
+                <span class="pill" [class]="'pill ' + stockLevel(product.availableQuantity)">
+                  {{ stockLabel(product.availableQuantity) }}
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary add"
+              [disabled]="product.availableQuantity === 0"
+              (click)="addToOrder(product)"
+            >
+              {{ cart.quantityOf(product.id) > 0 ? 'Add another' : 'Add to order' }}
+            </button>
+          </li>
+        }
+      </ul>
+      <div class="card catalogue-pager">
+        <app-pagination
+          [page]="r.page"
+          [pageSize]="r.pageSize"
+          [totalCount]="r.totalCount"
+          (pageChange)="goTo($event)"
+        />
+      </div>
+    }
+  } @else {
+    <div class="card">
+      <div class="spinner" role="status" aria-label="Loading products"></div>
+    </div>
+  }
+</section>
+
+@if (creating()) {
+  <app-modal title="New product" (closed)="creating.set(false)">
+    <app-product-form (saved)="onCreated($event)" />
+  </app-modal>
+}
+
+@if (editTarget(); as product) {
+  <app-modal [title]="'Edit · ' + product.name" (closed)="editTarget.set(null)">
+    <app-product-edit-form [product]="product" (saved)="onEdited($event)" (imageChanged)="refresh()" />
+  </app-modal>
+}
+
+@if (stockTarget(); as product) {
+  <app-modal [title]="'Stock · ' + product.name" (closed)="stockTarget.set(null)">
+    <app-stock-form [product]="product" (saved)="onStockSaved($event)" />
+  </app-modal>
+}

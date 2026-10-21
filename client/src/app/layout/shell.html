@@ -1,0 +1,48 @@
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" [routerLink]="auth.homeUrl()" aria-label="Ordera home">
+      <app-brand-logo />
+    </a>
+
+    <nav aria-label="Main">
+      @if (auth.isAdmin()) {
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+      }
+      <a routerLink="/products" routerLinkActive="active">Products</a>
+      <a routerLink="/orders" routerLinkActive="active">{{ auth.isAdmin() ? 'Orders' : 'My orders' }}</a>
+      @if (auth.isAdmin()) {
+        <a routerLink="/users" routerLinkActive="active">Users</a>
+      }
+    </nav>
+
+    <a class="btn btn-primary new-order" routerLink="/orders/new">
+      New order
+      @if (cart.itemCount() > 0) {
+        <span class="count" aria-label="{{ cart.itemCount() }} items in the new order">{{ cart.itemCount() }}</span>
+      }
+    </a>
+
+    @if (auth.user(); as user) {
+      <div class="account">
+        <div class="who">
+          <span class="name">{{ user.displayName }}</span>
+          <span class="role" [class.admin]="user.role === 'Admin'">{{ user.role }}</span>
+        </div>
+        <span class="email muted">{{ user.email }}</span>
+        <span
+          class="live"
+          [class.on]="realtime.connected()"
+          [attr.title]="realtime.connected() ? 'Orders update live' : 'Live updates are not connected'"
+        >
+          <span class="dot" aria-hidden="true"></span>
+          {{ realtime.connected() ? 'Live' : 'Offline' }}
+        </span>
+        <button type="button" class="btn btn-sm sign-out" (click)="auth.logout()">Sign out</button>
+      </div>
+    }
+  </aside>
+
+  <main>
+    <router-outlet />
+  </main>
+</div>

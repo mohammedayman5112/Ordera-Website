@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orders_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d orders_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Development enables Swagger UI at /swagger and the OpenAPI document at /openapi/v1.json.
+      ASPNETCORE_ENVIRONMENT: Development
+      # Inside the compose network the database is reachable as "db" on its internal port 5432.
+      ConnectionStrings__Default: Host=db;Port=5432;Database=orders_db;Username=postgres;Password=postgres
+      Database__MigrateOnStartup: "true"
+      Database__SeedOnStartup: "true"
+      # nginx forwards the client address, which the sign-in rate limiter needs to tell clients apart.
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      # The JWT signing key and the demo accounts come from appsettings.Development.json (development only).
+      # In any other environment set Jwt__Key to a long random secret.
+    volumes:
+      # Uploaded product pictures survive rebuilding the container.
+      - product-images:/data/product-images
+    ports:
+      - "8080:8080"
+
+  web:
+    build: ./client
+    depends_on:
+      - api
+    ports:
+      # The Angular app is served by nginx, which also proxies /api to the api service.
+      - "4200:80"
+
+volumes:
+  pgdata:
+  product-images:

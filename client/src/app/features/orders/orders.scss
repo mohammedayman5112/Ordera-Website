@@ -1,0 +1,16 @@
+.status-filter {
+  width: auto;
+  min-width: 10rem;
+}
+
+.customer {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.busy {
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}

@@ -1,0 +1,140 @@
+<section class="page">
+  <a class="back" routerLink="/orders">← All orders</a>
+
+  @if (order(); as o) {
+    <header class="page-header">
+      <div class="title">
+        <h1>Order #{{ o.id }}</h1>
+        <app-status-badge [status]="o.status" />
+      </div>
+
+      <div class="toolbar">
+        <a class="btn" [routerLink]="['/orders', o.id, 'invoice']">Invoice</a>
+        @for (next of nextStatuses(); track next) {
+          <button
+            type="button"
+            class="btn"
+            [class.btn-primary]="next !== 'Cancelled'"
+            [class.btn-outline-danger]="next === 'Cancelled'"
+            [disabled]="updating()"
+            (click)="changeStatus(next)"
+          >
+            {{ actionLabel(next) }}
+          </button>
+        } @empty {
+          <span class="muted">{{ noActionsMessage() }}</span>
+        }
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="card">
+        <div class="card-header"><h2>Items</h2></div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th class="num">Unit price</th>
+                <th class="num">Qty</th>
+                <th class="num">Line total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of o.items; track item.productId) {
+                <tr>
+                  <td>
+                    <div class="item">
+                      <app-product-image [src]="item.imageUrl" [name]="item.productName" [size]="36" />
+                      {{ item.productName }}
+                    </div>
+                  </td>
+                  <td class="num">{{ item.unitPrice | currency }}</td>
+                  <td class="num">{{ item.quantity }}</td>
+                  <td class="num">{{ item.lineTotal | currency }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" class="num"><strong>Total</strong></td>
+                <td class="num"><strong>{{ o.totalAmount | currency }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="card">
+          <div class="card-header"><h2>Details</h2></div>
+          <dl class="details card-body">
+            @if (isAdmin()) {
+              <dt>Customer</dt>
+              <dd>{{ o.customerEmail ?? '—' }}</dd>
+            }
+            <dt>Created</dt>
+            <dd>{{ o.createdAt | date: 'MMM d, y, h:mm a' }}</dd>
+            <dt>Last update</dt>
+            <dd>{{ o.updatedAt | date: 'MMM d, y, h:mm a' }}</dd>
+            <dt>Line items</dt>
+            <dd>{{ o.items.length }}</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2>History</h2></div>
+          <ol class="timeline card-body">
+            @for (entry of o.history; track $index) {
+              <li [class]="statusClass(entry.newStatus)">
+                <span class="dot" aria-hidden="true"></span>
+                <div>
+                  <strong>
+                    @if (entry.oldStatus) {
+                      {{ entry.oldStatus }} → {{ entry.newStatus }}
+                    } @else {
+                      Order placed
+                    }
+                  </strong>
+                  <div class="muted when">
+                    {{ entry.changedAt | date: 'MMM d, y, h:mm a' }}@if (entry.changedBy) {
+                      · by {{ entry.changedBy }}
+                    }
+                  </div>
+                </div>
+              </li>
+            }
+          </ol>
+        </div>
+      </div>
+    </div>
+  } @else if (view()?.kind === 'notFound') {
+    <div class="card">
+      <div class="empty">
+        <strong>Order not found</strong>
+        Order {{ id() }} does not exist.
+      </div>
+    </div>
+  } @else if (view()?.kind === 'error') {
+    <div class="card">
+      <div class="empty">
+        <strong>Could not load this order</strong>
+        <button type="button" class="btn" (click)="retry()">Retry</button>
+      </div>
+    </div>
+  } @else {
+    <div class="spinner" role="status" aria-label="Loading order"></div>
+  }
+</section>
+
+@if (confirmingCancel() && order(); as o) {
+  <app-modal [title]="'Cancel order #' + o.id" (closed)="confirmingCancel.set(false)">
+    <p class="confirm-text">
+      The reserved stock for this order will go back to the catalogue. A cancelled order cannot be reopened.
+    </p>
+    <div class="confirm-actions">
+      <button type="button" class="btn" (click)="confirmingCancel.set(false)">Keep order</button>
+      <button type="button" class="btn btn-danger" (click)="confirmCancel()">Cancel order</button>
+    </div>
+  </app-modal>
+}

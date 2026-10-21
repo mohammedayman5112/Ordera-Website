@@ -1,0 +1,202 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Orders, revenue and stock at a glance.</p>
+    </div>
+  </header>
+
+  @if (failed()) {
+    <div class="alert alert-error" role="alert">
+      Could not load the dashboard.
+      <button type="button" class="btn btn-sm" (click)="load()">Retry</button>
+    </div>
+  } @else if (summary(); as s) {
+    <div class="kpis">
+      <div class="card kpi">
+        <span class="label">Total orders</span>
+        <span class="value">{{ s.totalOrders | number }}</span>
+      </div>
+      <div class="card kpi">
+        <span class="label">Revenue</span>
+        <span class="value">{{ s.totalRevenue | currency }}</span>
+        <span class="note muted">All time, excluding cancelled orders</span>
+      </div>
+      <div class="card kpi">
+        <span class="label">Products</span>
+        <span class="value">{{ s.totalProducts | number }}</span>
+      </div>
+      <div class="card kpi" [class.attention]="s.lowStockCount > 0">
+        <span class="label">Low or out of stock</span>
+        <span class="value">{{ s.lowStockCount | number }}</span>
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="card">
+        <div class="card-header">
+          <h2>Sales</h2>
+          <label class="visually-hidden" for="sales-period">Period</label>
+          <select id="sales-period" class="select period" #period (change)="onPeriod(period.value)">
+            @for (d of periods; track d) {
+              <option [value]="d" [selected]="d === days()">Last {{ d }} days</option>
+            }
+          </select>
+        </div>
+
+        @if (analytics(); as a) {
+          <div class="stats">
+            <div class="stat">
+              <span class="label">Revenue</span>
+              <span class="value">{{ a.revenue | currency }}</span>
+              @if (revenueChange(); as change) {
+                <span class="delta" [class.up]="change > 0" [class.down]="change < 0">
+                  {{ change > 0 ? '▲' : '▼' }} {{ abs(change) | number: '1.0-1' }}%
+                </span>
+              }
+            </div>
+            <div class="stat">
+              <span class="label">Orders</span>
+              <span class="value">{{ a.orders | number }}</span>
+              @if (ordersChange(); as change) {
+                <span class="delta" [class.up]="change > 0" [class.down]="change < 0">
+                  {{ change > 0 ? '▲' : '▼' }} {{ abs(change) | number: '1.0-1' }}%
+                </span>
+              }
+            </div>
+            <div class="stat">
+              <span class="label">Average order</span>
+              <span class="value">{{ a.averageOrderValue | currency }}</span>
+            </div>
+          </div>
+          <p class="compare muted">Change compared with the {{ a.days }} days before.</p>
+          <div class="chart-wrap">
+            <app-revenue-chart [points]="a.daily" />
+          </div>
+        } @else if (analyticsFailed()) {
+          <div class="empty">
+            <strong>Could not load the sales figures</strong>
+            <button type="button" class="btn" (click)="loadAnalytics()">Retry</button>
+          </div>
+        } @else {
+          <div class="spinner" role="status" aria-label="Loading sales"></div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h2>Best sellers</h2></div>
+        @if (analytics(); as a) {
+          @if (a.topProducts.length === 0) {
+            <div class="empty">No sales in this period yet.</div>
+          } @else {
+            <ol class="top-products">
+              @for (product of a.topProducts; track product.productId; let i = $index) {
+                <li>
+                  <span class="rank">{{ i + 1 }}</span>
+                  <app-product-image [src]="product.imageUrl" [name]="product.name" [size]="40" />
+                  <div class="product">
+                    <div class="line">
+                      <strong>{{ product.name }}</strong>
+                      <span class="num">{{ product.revenue | currency }}</span>
+                    </div>
+                    <div class="line muted small">
+                      <span>{{ product.unitsSold | number }} sold</span>
+                    </div>
+                    <div class="track" aria-hidden="true">
+                      <span class="fill" [style.width.%]="(product.revenue / maxTopRevenue()) * 100"></span>
+                    </div>
+                  </div>
+                </li>
+              }
+            </ol>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="card">
+        <div class="card-header">
+          <h2>Recent orders</h2>
+          <a routerLink="/orders">View all</a>
+        </div>
+        @if (s.recentOrders.length === 0) {
+          <div class="empty">
+            <strong>No orders yet</strong>
+            Create the first order to see it here.
+          </div>
+        } @else {
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Status</th>
+                  <th class="num">Items</th>
+                  <th class="num">Total</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (order of s.recentOrders; track order.id) {
+                  <tr>
+                    <td>
+                      <a [routerLink]="['/orders', order.id]">#{{ order.id }}</a>
+                    </td>
+                    <td><app-status-badge [status]="order.status" /></td>
+                    <td class="num">{{ order.itemCount }}</td>
+                    <td class="num">{{ order.totalAmount | currency }}</td>
+                    <td class="muted nowrap">{{ order.createdAt | date: 'MMM d, h:mm a' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+
+      <div class="side">
+        <div class="card">
+          <div class="card-header"><h2>Orders by status</h2></div>
+          <ul class="bars card-body">
+            @for (entry of s.ordersByStatus; track entry.status) {
+              <li class="bar-row" [class]="'bar-row ' + statusClass(entry.status)">
+                <span>{{ entry.status }}</span>
+                <span class="track">
+                  <span class="fill" [style.width.%]="(entry.count / maxStatusCount()) * 100"></span>
+                </span>
+                <span class="num">{{ entry.count }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Needs restocking</h2>
+            <a routerLink="/products">Products</a>
+          </div>
+          @if (s.lowStockProducts.length === 0) {
+            <div class="empty">Every product is well stocked.</div>
+          } @else {
+            <ul class="stock-list">
+              @for (product of s.lowStockProducts; track product.id) {
+                <li>
+                  <div class="restock">
+                    <app-product-image [src]="product.imageUrl" [name]="product.name" [size]="32" />
+                    <a [routerLink]="['/products']" [queryParams]="{ search: product.name }">{{ product.name }}</a>
+                  </div>
+                  <span class="pill" [class]="'pill ' + stockLevel(product.availableQuantity)">
+                    {{ product.availableQuantity === 0 ? stockLabel(0) : product.availableQuantity + ' left' }}
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="spinner" role="status" aria-label="Loading dashboard"></div>
+  }
+</section>

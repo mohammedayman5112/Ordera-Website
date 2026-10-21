@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Noise-cancelling headphones">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d1fae5"/>
+      <stop offset="1" stop-color="#a7f3d0"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <circle cx="340" cy="52" r="70" fill="#ffffff" opacity=".28"/>
+  <circle cx="48" cy="268" r="54" fill="#ffffff" opacity=".22"/>
+  <ellipse cx="200" cy="262" rx="110" ry="9" fill="#064e3b" opacity=".16"/>
+  <path d="M112 190 C112 64 288 64 288 190" fill="none" stroke="#1e293b" stroke-width="16" stroke-linecap="round"/>
+  <path d="M126 176 C126 84 274 84 274 176" fill="none" stroke="#475569" stroke-width="6" stroke-linecap="round"/>
+  <rect x="86" y="162" width="52" height="88" rx="24" fill="#0f172a"/>
+  <rect x="262" y="162" width="52" height="88" rx="24" fill="#0f172a"/>
+  <rect x="100" y="176" width="30" height="60" rx="15" fill="#10b981"/>
+  <rect x="270" y="176" width="30" height="60" rx="15" fill="#10b981"/>
+  <rect x="106" y="184" width="8" height="22" rx="4" fill="#ffffff" opacity=".4"/>
+  <rect x="276" y="184" width="8" height="22" rx="4" fill="#ffffff" opacity=".4"/>
+</svg>

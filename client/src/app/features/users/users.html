@@ -1,0 +1,104 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Users</h1>
+      <p>Everyone who can sign in. Promote a colleague to admin or take the role away.</p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <app-search-box class="search" placeholder="Search by name or email…" [value]="query().search" (search)="onSearch($event)" />
+  </div>
+
+  <div class="card">
+    @if (failed()) {
+      <div class="empty">
+        <strong>Could not load users</strong>
+        <button type="button" class="btn" (click)="refresh()">Retry</button>
+      </div>
+    } @else if (result(); as r) {
+      @if (isEmpty()) {
+        <div class="empty">
+          <strong>No users found</strong>
+          Try a different search.
+        </div>
+      } @else {
+        <div class="table-wrap" [class.busy]="loading()">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th class="num">Orders</th>
+                <th>Joined</th>
+                <th><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of r.items; track user.id) {
+                <tr>
+                  <td>
+                    <strong>{{ user.displayName }}</strong>
+                    @if (user.id === currentUserId()) {
+                      <span class="you">you</span>
+                    }
+                    <div class="muted small">{{ user.email }}</div>
+                  </td>
+                  <td>
+                    <span class="role" [class.admin]="user.role === 'Admin'">{{ user.role }}</span>
+                  </td>
+                  <td class="num">{{ user.orderCount | number }}</td>
+                  <td class="muted nowrap">{{ user.createdAt | date: 'MMM d, y' }}</td>
+                  <td class="row-actions">
+                    @if (user.id === currentUserId()) {
+                      <span class="muted small">Your own role cannot be changed</span>
+                    } @else {
+                      <button type="button" class="btn btn-sm" (click)="askToChangeRole(user)">
+                        {{ user.role === 'Admin' ? 'Make regular user' : 'Make admin' }}
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-pagination
+          [page]="r.page"
+          [pageSize]="r.pageSize"
+          [totalCount]="r.totalCount"
+          (pageChange)="goTo($event)"
+        />
+      }
+    } @else {
+      <div class="spinner" role="status" aria-label="Loading users"></div>
+    }
+  </div>
+</section>
+
+@if (pending(); as change) {
+  <app-modal [title]="change.role === 'Admin' ? 'Make admin' : 'Remove admin access'" (closed)="pending.set(null)">
+    <p class="confirm-text">
+      @if (change.role === 'Admin') {
+        <strong>{{ change.user.displayName }}</strong> will be able to manage products, stock, orders and other users.
+      } @else {
+        <strong>{{ change.user.displayName }}</strong> will lose access to the dashboard, product management and the
+        orders of other customers.
+      }
+      The change applies the next time they sign in.
+    </p>
+    <div class="confirm-actions">
+      <button type="button" class="btn" (click)="pending.set(null)">Cancel</button>
+      <button
+        type="button"
+        class="btn"
+        [class.btn-primary]="change.role === 'Admin'"
+        [class.btn-danger]="change.role !== 'Admin'"
+        [disabled]="saving()"
+        (click)="confirmRoleChange()"
+      >
+        {{ saving() ? 'Saving…' : change.role === 'Admin' ? 'Make admin' : 'Remove admin access' }}
+      </button>
+    </div>
+  </app-modal>
+}

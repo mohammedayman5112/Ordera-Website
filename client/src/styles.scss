@@ -1,0 +1,506 @@
+// Global design system: tokens, base elements and the small set of utility classes the pages share.
+
+:root {
+  color-scheme: light dark;
+
+  --bg: #f4f5f9;
+  --surface: #ffffff;
+  --surface-2: #eef0f6;
+  --border: #dfe3ee;
+  --text: #1a1f2e;
+  --text-muted: #566079;
+
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-contrast: #ffffff;
+  --primary-soft: #eceefe;
+
+  --danger: #c62828;
+  --danger-hover: #a81f1f;
+  --danger-contrast: #ffffff;
+  --danger-soft: #fdeaea;
+  --success-soft: #e3f6ea;
+  --success-text: #166534;
+  --warning-soft: #fff4d6;
+  --warning-text: #8a5300;
+
+  --radius: 10px;
+  --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 1px 3px rgb(16 24 40 / 8%);
+  --shadow-lg: 0 12px 32px rgb(16 24 40 / 18%);
+  --focus: 0 0 0 3px rgb(79 70 229 / 35%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1320;
+    --surface: #171c2e;
+    --surface-2: #1f2540;
+    --border: #2b3252;
+    --text: #e8ebf5;
+    --text-muted: #a1a9c4;
+
+    --primary: #7c83ff;
+    --primary-hover: #959bff;
+    --primary-contrast: #0f1320;
+    --primary-soft: #232a52;
+
+    --danger: #ff7b7b;
+    --danger-hover: #ff9a9a;
+    --danger-contrast: #2a0a0a;
+    --danger-soft: #3b1d25;
+    --success-soft: #16301f;
+    --success-text: #7ee2a0;
+    --warning-soft: #3a2f10;
+    --warning-text: #ffd27a;
+
+    --shadow: 0 1px 2px rgb(0 0 0 / 40%);
+    --shadow-lg: 0 12px 32px rgb(0 0 0 / 55%);
+    --focus: 0 0 0 3px rgb(124 131 255 / 45%);
+  }
+}
+
+// Order status palette. A status class defines the three values that badges and chart bars consume.
+.st-pending {
+  --st-bg: #fff4d6;
+  --st-fg: #8a5300;
+  --st-solid: #f5a524;
+}
+.st-processing {
+  --st-bg: #e0efff;
+  --st-fg: #0b4f9c;
+  --st-solid: #3b82f6;
+}
+.st-shipped {
+  --st-bg: #ece6ff;
+  --st-fg: #5b2db8;
+  --st-solid: #8b5cf6;
+}
+.st-delivered {
+  --st-bg: #e3f6ea;
+  --st-fg: #166534;
+  --st-solid: #22a05a;
+}
+.st-cancelled {
+  --st-bg: #fdeaea;
+  --st-fg: #a11d1d;
+  --st-solid: #e5484d;
+}
+
+@media (prefers-color-scheme: dark) {
+  .st-pending {
+    --st-bg: #3a2f10;
+    --st-fg: #ffd27a;
+  }
+  .st-processing {
+    --st-bg: #162f52;
+    --st-fg: #8cc0ff;
+  }
+  .st-shipped {
+    --st-bg: #2c2350;
+    --st-fg: #c4adff;
+  }
+  .st-delivered {
+    --st-bg: #16301f;
+    --st-fg: #7ee2a0;
+  }
+  .st-cancelled {
+    --st-bg: #3b1d25;
+    --st-fg: #ff9a9a;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: Inter, 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.25;
+}
+
+h1 {
+  font-size: 1.6rem;
+}
+
+h2 {
+  font-size: 1.1rem;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+  border-radius: 6px;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Page structure
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+
+  p {
+    margin: 0.2rem 0 0;
+    color: var(--text-muted);
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-body {
+  padding: 1.1rem;
+}
+
+// Buttons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.12s, border-color 0.12s;
+
+  &:hover:not(:disabled) {
+    background: var(--surface-2);
+    text-decoration: none;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-contrast);
+
+  &:hover:not(:disabled) {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
+}
+
+.btn-danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--danger-contrast);
+
+  &:hover:not(:disabled) {
+    background: var(--danger-hover);
+    border-color: var(--danger-hover);
+  }
+}
+
+.btn-outline-danger {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: transparent;
+
+  &:hover:not(:disabled) {
+    background: var(--danger-soft);
+  }
+}
+
+.btn-sm {
+  padding: 0.3rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+// Forms
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+
+  label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .hint {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .error {
+    color: var(--danger);
+    font-size: 0.85rem;
+  }
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: var(--focus);
+  }
+
+  &.invalid {
+    border-color: var(--danger);
+  }
+}
+
+.search {
+  min-width: 14rem;
+  flex: 1 1 14rem;
+  max-width: 24rem;
+}
+
+// Tables
+.table-wrap {
+  position: relative; // keeps absolutely positioned content (visually-hidden labels) inside the scroll area
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.7rem 0.9rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  th {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    white-space: nowrap;
+  }
+
+  th.num,
+  td.num {
+    text-align: right;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr.clickable {
+    cursor: pointer;
+
+    &:hover {
+      background: var(--surface-2);
+    }
+  }
+}
+
+// Stock level indicator
+.pill {
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &.ok {
+    background: var(--success-soft);
+    color: var(--success-text);
+  }
+
+  &.low {
+    background: var(--warning-soft);
+    color: var(--warning-text);
+  }
+
+  &.out {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+}
+
+// Feedback
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: var(--surface-2);
+
+  &.alert-error {
+    background: var(--danger-soft);
+    border-color: var(--danger);
+    color: var(--danger);
+  }
+
+  &.alert-warning {
+    background: var(--warning-soft);
+    color: var(--warning-text);
+  }
+}
+
+.empty {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+
+  strong {
+    display: block;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+    font-size: 1.05rem;
+  }
+}
+
+.spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: 2.5rem auto;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.5s;
+  }
+}
+
+// Printing (used by the invoice page): hide the app chrome and always print on white, even in dark mode.
+@media print {
+  :root {
+    --bg: #fff;
+    --surface: #fff;
+    --surface-2: #f3f4f6;
+    --border: #d1d5db;
+    --text: #111827;
+    --text-muted: #4b5563;
+    --primary: #4f46e5;
+    --primary-contrast: #fff;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .no-print,
+  .sidebar,
+  app-toast-container {
+    display: none !important;
+  }
+
+  .layout {
+    display: block !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+  }
+}

@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+node_modules/
+App_Data/
+TestResults/
+marketing/

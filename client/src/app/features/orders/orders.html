@@ -1,0 +1,95 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>{{ isAdmin() ? 'Orders' : 'My orders' }}</h1>
+      <p>{{ isAdmin() ? 'Track every order from placement to delivery.' : 'Follow your orders from placement to delivery.' }}</p>
+    </div>
+    <div class="toolbar">
+      @if (isAdmin()) {
+        <button type="button" class="btn" [disabled]="exporting()" (click)="exportCsv()">
+          {{ exporting() ? 'Exporting…' : 'Export CSV' }}
+        </button>
+      }
+      <a class="btn btn-primary" routerLink="/orders/new">New order</a>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <app-search-box
+      class="search"
+      [placeholder]="isAdmin() ? 'Search by order #, customer or product…' : 'Search by order # or product…'"
+      [value]="query().search"
+      (search)="onSearch($event)"
+    />
+    <select class="select status-filter" aria-label="Filter by status" #statusFilter (change)="onStatus(statusFilter.value)">
+      <option value="" [selected]="query().status === ''">All statuses</option>
+      @for (status of statuses; track status) {
+        <option [value]="status" [selected]="query().status === status">{{ status }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="card">
+    @if (failed()) {
+      <div class="empty">
+        <strong>Could not load orders</strong>
+        <button type="button" class="btn" (click)="refresh()">Retry</button>
+      </div>
+    } @else if (result(); as r) {
+      @if (isEmpty()) {
+        <div class="empty">
+          @if (isFiltered()) {
+            <strong>No orders match these filters</strong>
+            Try clearing the search or choosing another status.
+          } @else {
+            <strong>No orders yet</strong>
+            Place the first order to get started.
+          }
+        </div>
+      } @else {
+        <div class="table-wrap" [class.busy]="loading()">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                @if (isAdmin()) {
+                  <th>Customer</th>
+                }
+                <th>Status</th>
+                <th class="num">Items</th>
+                <th class="num">Total</th>
+                <th>Created</th>
+                <th>Last update</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of r.items; track order.id) {
+                <tr>
+                  <td>
+                    <a [routerLink]="['/orders', order.id]">#{{ order.id }}</a>
+                  </td>
+                  @if (isAdmin()) {
+                    <td class="customer" [class.muted]="!order.customerEmail">{{ order.customerEmail ?? '—' }}</td>
+                  }
+                  <td><app-status-badge [status]="order.status" /></td>
+                  <td class="num">{{ order.itemCount }}</td>
+                  <td class="num">{{ order.totalAmount | currency }}</td>
+                  <td class="muted nowrap">{{ order.createdAt | date: 'MMM d, h:mm a' }}</td>
+                  <td class="muted nowrap">{{ order.updatedAt | date: 'MMM d, h:mm a' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-pagination
+          [page]="r.page"
+          [pageSize]="r.pageSize"
+          [totalCount]="r.totalCount"
+          (pageChange)="goTo($event)"
+        />
+      }
+    } @else {
+      <div class="spinner" role="status" aria-label="Loading orders"></div>
+    }
+  </div>
+</section>
